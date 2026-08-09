@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Body
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
@@ -6,6 +6,78 @@ from fastapi.openapi.docs import (
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
+hotels = [
+    {"id": 1, "title": "Dubai", "name": "sochi"},
+    {"id": 2, "title": "Sochi", "name": "dubai"}
+]
+
+@app.get("/hotels",
+         summary="Запрос на получения отелей"
+         )
+def get_hotels(
+        id: int | None = Query(None, description="Айдишник"),
+        title: str | None = Query(None,description="Название отеля"),
+):
+    hotels = []
+    for hotel in hotels:
+        if id and hotel["id"] != id:
+            continue
+        if title and hotel["title"] != title:
+            continue
+        hotels.append(hotel)
+    return hotels
+
+@app.delete("/hotels/{hotel_id}",
+            summary="Запрос на удаление отеля"
+            )
+def delete_hotel(hotel_id: int):
+    global hotels
+    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
+    return {"status": "OK"}
+
+@app.post("/hotels",
+          summary="Запрос на создание отеля"
+          )
+def create_hotel(
+        title: str = Body(embed=True)
+):
+    global hotels
+    hotels.append({
+        "id": hotels[-1]["id"] + 1,
+        "title": title
+    })
+    return {"status": "OK"}
+
+@app.put("/hotels/{hotel_id}",
+         summary="Полное обновление даннных об отеле",
+         )
+def edit_hotel(
+        hotel_id: int,
+        title: str = Body(),
+        name: str = Body()
+):
+    global hotels
+    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
+    hotel["title"] = title
+    hotel["name"] = name
+    return {"status": "OK"}
+
+@app.patch("/hotels/{hotel_id}",
+           summary="Частичное обновление даннных об отеле",
+           description="Можно отправить частями"
+           )
+def partially_edit_hotel(
+        hotel_id: int,
+        title: str | None = Body(),
+        name: str | None = Body()
+):
+    global hotels
+    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id]
+    if title:
+        hotel["title"] = title
+    elif name:
+        hotel["name"] = name
+    return {"status": "OK"}
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():

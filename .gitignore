@@ -1,6 +1,16 @@
+# Virtual environment
 .venv/
 venv/
 env/
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+
+# IntelliJ IDEA
 .idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
