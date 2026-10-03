@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
@@ -10,9 +11,11 @@ from fastapi.openapi.docs import (
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.api.hotels import router as router_hotels
+from src.api.auth import router as router_auth
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
+app.include_router(router_auth)
 app.include_router(router_hotels)
 
 @app.get("/docs", include_in_schema=False)
@@ -25,7 +28,9 @@ async def custom_swagger_ui_html():
         swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
     )
 
-
 @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
 async def swagger_ui_redirect():
     return get_swagger_ui_oauth2_redirect_html()
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", reload=True)
