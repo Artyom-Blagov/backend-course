@@ -22,7 +22,7 @@ async def get_hotel(hotel_id: int):
 
 
 @router.get("",
-         summary="Запрос на получения отелей"
+         summary="Запрос на получение отелей"
          )
 async def get_hotels(
         pagination: PaginationDep,
