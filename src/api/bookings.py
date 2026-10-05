@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from src.api.dependencies import UserIdDep, DBDep
 from src.repositories.bookings import BookingsRepository
 from src.schemas.bookings import BookingAddRequest, BookingAdd
-from src.db import async_session_maker
 
 router = APIRouter(prefix="/bookings",tags=["Бронирование"])
 
@@ -26,17 +25,28 @@ async def add_booking(
     await db.commit()
     return {"status": "OK", "data": booking}
 
+@router.get("",
+          summary="Запрос на получение всех бронирований"
+          )
+async def get_bookings(db: DBDep):
+    return await db.rooms.get_all()
 
+@router.get("/me",
+          summary="Запрос на получение бронирования"
+          )
+async def get_my_bookings(db: DBDep, user_id: UserIdDep):
+    return await db.bookings.get_filtered(user_id=user_id)
 
-    return {"status": "OK", "data": booking}
-
-# @router.post("/{hotel_id}/rooms",
-#           summary="Запрос на создание номера отеля"
-#           )
-# async def create_room(hotel_id: int, room_data: RoomAddRequest = Body()):
-#     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
+# @router.get("/{hotel_id}/rooms",
+#          summary="Запрос на получение номеров отеля"
+#          )
+# async def get_rooms(hotel_id: int):
 #     async with async_session_maker() as session:
-#         room = await RoomsRepository(session).add(_room_data)
-#         await session.commit()
+#         return await RoomsRepository(session).get_filtered(hotel_id=hotel_id)
 #
-#     return {"status": "OK", "data": room}
+# @router.get("/{hotel_id}/rooms/{room_id}",
+#          summary="Запрос на получение номера отеля"
+#          )
+# async def get_room(hotel_id: int, room_id: int):
+#     async with async_session_maker() as session:
+#         return await RoomsRepository(session).get_one_or_none(id=room_id, hotel_id=hotel_id)
