@@ -37,16 +37,3 @@ async def get_bookings(db: DBDep):
 async def get_my_bookings(db: DBDep, user_id: UserIdDep):
     return await db.bookings.get_filtered(user_id=user_id)
 
-# @router.get("/{hotel_id}/rooms",
-#          summary="Запрос на получение номеров отеля"
-#          )
-# async def get_rooms(hotel_id: int):
-#     async with async_session_maker() as session:
-#         return await RoomsRepository(session).get_filtered(hotel_id=hotel_id)
-#
-# @router.get("/{hotel_id}/rooms/{room_id}",
-#          summary="Запрос на получение номера отеля"
-#          )
-# async def get_room(hotel_id: int, room_id: int):
-#     async with async_session_maker() as session:
-#         return await RoomsRepository(session).get_one_or_none(id=room_id, hotel_id=hotel_id)
