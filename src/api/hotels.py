@@ -2,7 +2,7 @@ from fastapi import Query, Body, APIRouter
 from sqlalchemy import insert, select, func
 
 from src.db import async_session_maker, engine
-from src.api.dependencies import PaginationDep
+from src.api.dependencies import PaginationDep, DBDep
 from src.models.hotels import HotelsOrm
 from src.repositories.hotels import HotelsRepository
 from src.schemas.hotels import HotelPatch, Hotel, HotelAdd
@@ -26,12 +26,12 @@ async def get_hotel(hotel_id: int):
          )
 async def get_hotels(
         pagination: PaginationDep,
+        db: DBDep,
         location: int | None = Query(None, description="Локация"),
         title: str | None = Query(None,description="Название отеля"),
 ):
-    per_page = pagination.per_page or 5
-    async with async_session_maker() as session:
-        return await HotelsRepository(session).get_all(
+        per_page = pagination.per_page or 5
+        return await db.hotels.get_all(
             location=location,
             title=title,
             limit=per_page,
