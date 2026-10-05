@@ -8,7 +8,7 @@ from src.schemas.users import UserRequestAdd, UserAdd
 
 router = APIRouter(prefix="/auth", tags=["Авторизация и аутентификация"])
 
-@router.post("/register")
+@router.post("/register", summary="Запрос на регистрацию пользователя")
 async def register_user(
         data: UserRequestAdd,
 ):
@@ -21,7 +21,7 @@ async def register_user(
     return {"status": "OK"}
 
 
-@router.post("/login")
+@router.post("/login", summary="Запрос на аутентификацию")
 async def login_user(
         data: UserRequestAdd,
         response: Response,
@@ -37,7 +37,7 @@ async def login_user(
         return {"access_token": access_token}
 
 
-@router.get("/me")
+@router.get("/me", summary="Запрос на получение информации о пользователе")
 async def get_me(
         user_id: UserIdDep
 ):
@@ -45,7 +45,7 @@ async def get_me(
         user = await UsersRepository(session).get_one_or_none(id=user_id)
     return user
 
-@router.post("/logout")
+@router.post("/logout", summary="Запрос на завершение сеанса")
 async def logout_user(response: Response):
     response.delete_cookie("access_token")
     return {"status": "OK"}

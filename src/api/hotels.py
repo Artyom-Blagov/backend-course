@@ -5,7 +5,7 @@ from src.db import async_session_maker, engine
 from src.api.dependencies import PaginationDep
 from src.models.hotels import HotelsOrm
 from src.repositories.hotels import HotelsRepository
-from src.schemas.hotels import HotelPATCH, Hotel, HotelAdd
+from src.schemas.hotels import HotelPatch, Hotel, HotelAdd
 
 router = APIRouter(
     prefix="/hotels",
@@ -76,7 +76,7 @@ async def edit_hotel(hotel_id: int,hotel_data: HotelAdd):
            )
 async def partially_edit_hotel(
         hotel_id: int,
-        hotel_data: HotelPATCH
+        hotel_data: HotelPatch
 ):
     async with async_session_maker() as session:
         await HotelsRepository(session).edit(hotel_data,exclude_unset=True, id=hotel_id)
