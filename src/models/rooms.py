@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column, foreign
+from sqlalchemy.orm import Mapped, mapped_column, foreign, relationship
 from sqlalchemy import String, ForeignKey
 
 from src.db import Base
@@ -14,3 +14,8 @@ class RoomsOrm(Base):
     price: Mapped[int] #Decimal
     quantity: Mapped[int]
 
+    facilities: Mapped[list["FacilitiesORM"]] = relationship(
+        back_populates="rooms",
+        secondary="rooms_facilities",
+
+    )
