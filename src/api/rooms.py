@@ -6,7 +6,6 @@ from src.schemas.facilities import RoomFacility, RoomFacilityAdd
 from src.api.dependencies import DBDep
 from src.schemas.rooms import RoomAdd, RoomAddRequest, RoomPatchRequest, RoomPatch
 from src.db import async_session_maker
-from src.repositories.rooms import RoomsRepository
 
 router = APIRouter(
     prefix="/hotels",
