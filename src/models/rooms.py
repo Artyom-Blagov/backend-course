@@ -14,7 +14,7 @@ class RoomsOrm(Base):
     price: Mapped[int] #Decimal
     quantity: Mapped[int]
 
-    facilities: Mapped[list["FacilitiesORM"]] = relationship(
+    facilities: Mapped[list["FacilitiesOrm"]] = relationship(
         back_populates="rooms",
         secondary="rooms_facilities",
 
