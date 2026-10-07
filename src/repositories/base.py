@@ -1,9 +1,5 @@
-from _testcapi import awaitType
 from pydantic import BaseModel
-from pydantic_settings.sources.providers import aws
 from sqlalchemy import select, insert, delete, update
-
-from src.schemas.hotels import Hotel
 
 
 class BaseRepository:
