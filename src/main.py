@@ -1,13 +1,16 @@
 import sys
+import uvicorn
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+
 
 from src.init import redis_manager
 
@@ -23,6 +26,8 @@ from src.api.facilities import router as router_facilities
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await redis_manager.connect()
+
+    FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
     yield
     await redis_manager.close()
 
