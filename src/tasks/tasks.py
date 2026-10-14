@@ -3,7 +3,7 @@ import os
 from PIL import Image
 from time import sleep
 
-from db import async_session_maker_null_pool
+from src.db import async_session_maker_null_pool
 from src.tasks.celery_app import celery_instance
 from src.utils.db_manager import DBManager
 
@@ -15,7 +15,7 @@ def test_task():
 
 @celery_instance.task
 def resize_image(image_path: str):
-    sizes = [1000, 500, 200]
+    sizes = [10000, 500, 200]
     output_folder = "src/static/images"
 
     img = Image.open(image_path)
@@ -34,11 +34,13 @@ def resize_image(image_path: str):
 
     print(f"Изображение сохранено в следующих размерах: {sizes} в папке {output_folder}")
 
-async def get_bookings_with_today_checkin_helper():
-    print("Я запускаюсь")
-    async with DBManager(session_factory=async_session_maker_null_pool) as db:
-        bookings = await db.bookings.get_bookings_with_today_checkin()
-        print(f"{bookings}")
+
+# async def get_bookings_with_today_checkin_helper():
+#     print("Я запускаюсь")
+#     async with DBManager(session_factory=async_session_maker_null_pool) as db:
+#         bookings = await db.bookings.get_bookings_with_today_checkin()
+#         print(f"{bookings}")
+ 
 
 @celery_instance.task(name="booking_today_checkin")
 def send_emails_to_users_with_today_checkin():
