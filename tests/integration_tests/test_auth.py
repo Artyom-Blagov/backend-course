@@ -1,4 +1,4 @@
-from services.auth import AuthService
+from src.services.auth import AuthService
 
 
 def test_decode_and_encode_access_token():
