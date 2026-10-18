@@ -1,7 +1,4 @@
-from db import async_session_maker_null_pool
-from src.db import async_session_maker
 from src.schemas.hotels import HotelAdd
-from src.utils.db_manager import DBManager
 
 async def test_add_hotel(db):
     hotel_data = HotelAdd(title="Небесный сад 3 звезды", location="Геленджик")
