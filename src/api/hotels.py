@@ -15,7 +15,7 @@ router = APIRouter(
 @router.get("/{hotel_id}",
          summary="Запрос на получения отеля"
          )
-@cache(expire=10)
+#@cache(expire=10)
 async def get_hotel(hotel_id: int, db: DBDep):
     return await db.hotels.get(hotel_id)
 
@@ -23,7 +23,7 @@ async def get_hotel(hotel_id: int, db: DBDep):
 @router.get("",
          summary="Запрос на получение отелей"
          )
-@cache(expire=10)
+#@cache(expire=10)
 async def get_hotels(
         pagination: PaginationDep,
         db: DBDep,
@@ -32,6 +32,7 @@ async def get_hotels(
         date_from: date = Query(example="2026-10-01"),
         date_to: date = Query(example="2026-10-07"),
 ):
+        page = pagination.page or 1
         per_page = pagination.per_page or 5
         return await db.hotels.get_filtered_by_time(
             date_from=date_from,
@@ -39,7 +40,7 @@ async def get_hotels(
             location=location,
             title=title,
             limit=per_page,
-            offset=per_page * (pagination.page - 1)
+            offset=per_page * (page - 1)
         )
 
 @router.post("",
