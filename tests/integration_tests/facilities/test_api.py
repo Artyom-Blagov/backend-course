@@ -8,7 +8,7 @@ async def test_get_facilities(ac):
 
 async def test_post_facilities(ac):
     facility_title = "Кондиционер"
-    response = await ac.post("/facilities", json={"title": "Кондиционер"})
+    response = await ac.post("/facilities", json={"title": facility_title})
     assert response.status_code == 200
     res = response.json()
     assert isinstance(res, dict)

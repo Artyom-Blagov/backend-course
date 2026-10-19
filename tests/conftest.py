@@ -1,18 +1,20 @@
 import json
+from unittest import mock
+
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
 
 import pytest
 
 from src.api.dependencies import get_db
 from config import settings
-from db import async_session_maker, async_session_maker_null_pool
-from src.schemas.hotels import HotelAdd
-from src.schemas.rooms import RoomAdd
+from src.db import Base, engine_null_pool, async_session_maker_null_pool
 from src.main import app
 from src.models import *
-from src.db import Base, engine_null_pool
 from httpx import AsyncClient
 
-from utils.db_manager import DBManager
+from src.schemas.hotels import HotelAdd
+from src.schemas.rooms import RoomAdd
+from src.utils.db_manager import DBManager
 
 
 @pytest.fixture(scope="session", autouse=True)
