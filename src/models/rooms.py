@@ -8,6 +8,7 @@ from src.db import Base
 if typing.TYPE_CHECKING:
     from src.models import FacilitiesOrm
 
+
 class RoomsOrm(Base):
     __tablename__ = "rooms"
 
@@ -15,11 +16,10 @@ class RoomsOrm(Base):
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id"))
     title: Mapped[str]
     description: Mapped[str | None]
-    price: Mapped[int] #Decimal
+    price: Mapped[int]  # Decimal
     quantity: Mapped[int]
 
     facilities: Mapped[list["FacilitiesOrm"]] = relationship(
         back_populates="rooms",
         secondary="rooms_facilities",
-
     )

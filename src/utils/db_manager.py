@@ -25,6 +25,5 @@ class DBManager:
         await self.session.rollback()
         await self.session.close()
 
-
     async def commit(self):
         await self.session.commit()

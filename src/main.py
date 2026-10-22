@@ -21,6 +21,7 @@ from src.api.bookings import router as router_bookings
 from src.api.facilities import router as router_facilities
 from src.api.images import router as router_images
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await redis_manager.connect()
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI):
     FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
     yield
     await redis_manager.close()
+
 
 app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
 
@@ -37,6 +39,7 @@ app.include_router(router_rooms)
 app.include_router(router_facilities)
 app.include_router(router_bookings)
 app.include_router(router_images)
+
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
@@ -48,9 +51,11 @@ async def custom_swagger_ui_html():
         swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
     )
 
+
 @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
 async def swagger_ui_redirect():
     return get_swagger_ui_oauth2_redirect_html()
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

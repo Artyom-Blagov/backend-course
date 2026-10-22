@@ -39,6 +39,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
+
 def downgrade() -> None:
     """Downgrade schema."""
     op.drop_table("bookings")

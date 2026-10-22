@@ -22,16 +22,20 @@ from src.utils.db_manager import DBManager
 async def check_test_mode():
     assert settings.MODE == "TEST"
 
+
 @pytest.fixture(scope="function")
 async def db() -> DBManager:
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         yield db
 
+
 async def get_db_null_pool():
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         yield db
 
+
 app.dependency_overrides[get_db] = get_db_null_pool
+
 
 @pytest.fixture(scope="session", autouse=True)
 async def setup_database(check_test_mode):
@@ -52,10 +56,12 @@ async def setup_database(check_test_mode):
         await db_.rooms.add_bulk(rooms)
         await db_.commit()
 
+
 @pytest.fixture(scope="session", autouse=True)
 async def ac() -> AsyncClient:
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
+
 
 @pytest.fixture(scope="session", autouse=True)
 async def register_user(ac, setup_database):
@@ -64,18 +70,18 @@ async def register_user(ac, setup_database):
         json={
             "email": "kot@mail.ru",
             "password": "userKot",
-        }
+        },
     )
+
 
 @pytest.fixture(scope="session")
 async def authenticated_ac(register_user, ac):
     await ac.post(
         "/auth/login",
-        json = {
+        json={
             "email": "kot@mail.ru",
             "password": "userKot",
-        }
+        },
     )
     assert ac.cookies["access_token"]
     yield ac
-

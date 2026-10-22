@@ -6,6 +6,7 @@ from sqlalchemy import ForeignKey
 
 from src.db import Base
 
+
 class BookingsOrm(Base):
     __tablename__ = "bookings"
 
@@ -14,8 +15,8 @@ class BookingsOrm(Base):
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id"))
     date_from: Mapped[date]
     date_to: Mapped[date]
-    price : Mapped[int] 
+    price: Mapped[int]
 
     @hybrid_property
     def total_cost(self) -> int:
-       return self.price * (self.date_to - self.date_from).days
+        return self.price * (self.date_to - self.date_from).days
