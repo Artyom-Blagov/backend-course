@@ -1,8 +1,11 @@
 from datetime import date
 
-from fastapi import APIRouter, Body, Query
+from amqp import NotFound
+from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi_cache.decorator import cache
 
+from src.exceptions import ObjectNotFoundException, HotelNotFoundHTTPException
+from src.exceptions import check_date_to_after_date_from
 from src.api.dependencies import DBDep, PaginationDep
 from src.schemas.hotels import HotelAdd, HotelPatch
 
@@ -10,13 +13,6 @@ router = APIRouter(
     prefix="/hotels",
     tags=["Отели"],
 )
-
-
-@router.get("/{hotel_id}", summary="Запрос на получения отеля")
-@cache(expire=10)
-async def get_hotel(hotel_id: int, db: DBDep):
-    return await db.hotels.get(hotel_id)
-
 
 @router.get("", summary="Запрос на получение отелей")
 @cache(expire=10)
@@ -28,6 +24,7 @@ async def get_hotels(
     date_from: date = Query(example="2026-10-01"),
     date_to: date = Query(example="2026-10-07"),
 ):
+    check_date_to_after_date_from(date_from, date_to)
     page = pagination.page or 1
     per_page = pagination.per_page or 5
     return await db.hotels.get_filtered_by_time(
@@ -39,6 +36,13 @@ async def get_hotels(
         offset=per_page * (page - 1),
     )
 
+@router.get("/{hotel_id}", summary="Запрос на получения отеля")
+@cache(expire=10)
+async def get_hotel(hotel_id: int, db: DBDep):
+    try:
+        return await db.hotels.get_one(id=hotel_id)
+    except ObjectNotFoundException:
+        raise HotelNotFoundHTTPException
 
 @router.post("", summary="Запрос на создание отеля")
 async def create_hotel(
