@@ -1,5 +1,5 @@
 from typing import Sequence, Any
-
+import logging
 from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select, insert, delete, update
@@ -49,10 +49,15 @@ class BaseRepository:
             model = result.scalars().one()
             return self.mapper.map_to_domain_entity(model)
         except IntegrityError as ex:
-            print(f"{type(ex.orig.__cause__)=}")
+            logging.exception(
+                f"Не удалось добавить данные в БД, входнные данные={data} тип ошибки:{type(ex.orig.__cause__)=}"
+            )
             if isinstance(ex.orig.__class__, UniqueViolationError):
                 raise ObjectAlreadyExistsException from ex
             else:
+                logging.exception(
+                    f"Незнакомая ошибка: Не удалось добавить данные в БД, входнные данные={data} тип ошибки:{type(ex.orig.__cause__)=}"
+                )
                 raise ex
 
 

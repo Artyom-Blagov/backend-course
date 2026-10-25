@@ -1,6 +1,5 @@
 from datetime import date
 
-from amqp import NotFound
 from fastapi import APIRouter, Body, Query, HTTPException
 from fastapi_cache.decorator import cache
 
