@@ -3,19 +3,38 @@ from datetime import date
 from fastapi import HTTPException
 
 
+
 class NabronirovalException(Exception):
     detail = "Неожиданная ошибка"
     def __init__(self, *args, **kargs):
         super().__init__(self.detail, *args, **kargs)
 
+class IncorrectTokenException(NabronirovalException):
+    detail = "Некорректный токен"
+
 class ObjectNotFoundException(NabronirovalException):
     detail = "Объект не найден"
+
+class RoomNotFoundException(NabronirovalException):
+    detail = "Номер не найден"
+
+class HotelNotFoundException(NabronirovalException):
+    detail = "Отель не найден"
 
 class ObjectAlreadyExistsException(NabronirovalException):
     detail = "Похожий объект уже существуект"
 
 class AllRoomsAreBookedException(NabronirovalException):
     detail = "Не осталось свободных номеров"
+
+class EmailNotRegisteredException(NabronirovalException):
+    detail = "Пользователь с таким email не зарегистрирован"
+
+class UserEmailAlreadyExistsException(NabronirovalException):
+    detail="Пользователь с такой почтой уже существует"
+
+class IncorrectPasswordException(NabronirovalException):
+    detail = "Пароль неверный"
 
 class NabronirovalHTTPException(HTTPException):
     status_code = 500
@@ -32,6 +51,26 @@ class RoomNotFoundHTTPException(NabronirovalHTTPException):
     status_code = 404
     detail = "Номер не найден"
 
+class AllRoomsAreBookedHTTPException(NabronirovalHTTPException):
+    status_code = 409
+    detail = "Не осталось свободных номеров"
+
+class IncorrectTokenHTTPException(NabronirovalException):
+    status_code = 401
+    detail = "Некорректный токен"
+
 def check_date_to_after_date_from(date_from: date, date_to: date) -> None:
     if date_to <= date_from:
         raise HTTPException(status_code=422, detail="Дата заезда не может быть позже даты выезда")
+
+class EmailNotRegisteredHTTPException(NabronirovalException):
+    status_code = 401
+    detail = "Пользователь с таким email не зарегистрирован"
+
+class UserEmailAlreadyExistsHTTPException(NabronirovalHTTPException):
+    status_code=409
+    detail="Пользователь с такой почтой уже существует"
+
+class IncorrectPasswordHTTPException(NabronirovalHTTPException):
+    status_code=401
+    detail = "Пароль неверный"
